@@ -138,10 +138,11 @@ Indexes: `expenses(user_id, expense_date)`, `expenses(user_id, category_id)`.
 
 ### Phase 7 — Testing & Deployment
 
-- [ ] API tests (Jest + Supertest), including the RLS isolation test
-- [ ] Key frontend component tests (Vitest + Testing Library)
-- [ ] Deploy the client (Vercel) and the server (Render/Railway); set production env vars and CORS
-- [ ] Final README: setup, env vars, scripts, screenshots
+- [x] API tests (Vitest + Supertest), including the RLS isolation test
+- [x] Key frontend component tests (Vitest + Testing Library)
+- [x] CI on GitHub Actions (lint, tests, build)
+- [ ] Deploy client + API together on Vercel (API as a serverless function at `/api`; same domain, so no CORS setup); set production env vars
+- [x] Final README: setup, env vars, scripts, deploy steps
 
 **Done when:** the live URL works end-to-end for a new user signup.
 

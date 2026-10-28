@@ -30,7 +30,9 @@ export default function Modal({ open, onClose, title, children }) {
       if (e.key === 'Escape') return onCloseRef.current();
       if (e.key !== 'Tab') return;
       // Keep Tab inside the dialog
-      const items = [...panel.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null);
+      const items = [...panel.querySelectorAll(FOCUSABLE)].filter(
+        (el) => !el.closest('[hidden], [inert]'),
+      );
       if (!items.length) return;
       const first = items[0];
       const last = items[items.length - 1];

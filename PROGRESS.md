@@ -19,6 +19,8 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 ## Changelog
 
+- **2026-10-28**: Phase 7: tests (server 39 unit + 42 DB, client 23 component/unit), GitHub Actions CI, final README with Vercel steps. Only the Vercel deploy itself is left (done from the Vercel dashboard).
+
 - **2026-10-28**: Phase 6 done. Dark mode, error states, dialog focus handling, forgot/reset/change password, custom categories page, per-page code splitting. Renamed to Expensly. Vercel setup added; code pushed to github.com/Rishi1228/Expensly.
 
 - **2026-10-28**: Phase 5 done. Recurring bills: SQL job on pg_cron (daily 12:05 UTC) + catch-up when the app opens, API, and a Recurring page. `e2e-recurring` script: 40/40, including "due today → exactly one expense, rerun → no duplicate". Checked in Chrome on desktop.
@@ -135,10 +137,12 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 ## Phase 7 — Testing & Deployment
 
-- [ ] API tests
-- [ ] Component tests
-- [ ] Deploy client + server
-- [ ] Final README
+- [x] API tests (Vitest + supertest). `npm test`: 39 unit tests (dates, schemas, auth/JSON/404 handling, error mapping), no DB needed. `npm run test:db`: 42 tests against real Supabase (expenses, filters, custom categories, stats numbers, recurring job incl. "due today logs once, rerun adds none", user isolation, SQL function permissions)
+- [x] Component tests (Vitest + Testing Library, 23): ExpenseForm (validation, create body, two-tap delete), RecurringForm (create body, edit sends schedule only when changed), CategoryPicker, Modal focus trap, theme, date/money formatting
+- [x] CI: `.github/workflows/ci.yml` runs lint, `npm test`, build on push/PR
+- [x] Vercel setup: `api/index.js` + `vercel.json`; checked locally that the function entry serves `/api/*`. Linux native build packages confirmed in the lockfile
+- [ ] Deploy on Vercel: steps in README ("Deploy to Vercel"). Needs the user's Vercel account
+- [x] Final README
 
-**Notes / Decisions:**
-**Blockers:**
+**Notes / Decisions:** The service-role key isn't used by the API at all, so it is left out of Vercel (only DB tests use it). DB tests create temporary users and delete them after.
+**Blockers:** Deploy waits on the user importing the repo in Vercel.
