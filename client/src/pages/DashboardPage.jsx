@@ -14,6 +14,7 @@ import ChangeBadge from '../components/dashboard/ChangeBadge.jsx';
 import StatTile, { cardClass } from '../components/dashboard/StatTile.jsx';
 import TrendChart from '../components/dashboard/TrendChart.jsx';
 import Button from '../components/ui/Button.jsx';
+import ErrorNote from '../components/ui/ErrorNote.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 
 const DASHBOARD_PERIODS = PERIODS.filter((p) => p.value !== 'custom');
@@ -43,7 +44,8 @@ export default function DashboardPage() {
   });
   const summary = useSummary(range);
   const trend = useTrend(range);
-  const { data: recent, isLoading: recentLoading } = useRecentExpenses(5);
+  const recentQuery = useRecentExpenses(5);
+  const { data: recent, isLoading: recentLoading } = recentQuery;
 
   const s = summary.data;
   const firstName = me?.profile?.full_name?.split(' ')[0];
@@ -88,6 +90,16 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+
+      {summary.isError && (
+        <div className="rounded-2xl bg-rose-50 ring-1 ring-rose-200 dark:bg-rose-950/40 dark:ring-rose-900">
+          <ErrorNote
+            className="py-4"
+            message="Couldn’t load your totals."
+            onRetry={summary.refetch}
+          />
+        </div>
+      )}
 
       {/* Headline tiles */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -146,6 +158,8 @@ export default function DashboardPage() {
           </div>
           {recentLoading ? (
             <Spinner />
+          ) : recentQuery.isError ? (
+            <ErrorNote message="Couldn’t load recent expenses." onRetry={recentQuery.refetch} />
           ) : recent?.data.length ? (
             <div className="-mx-4 divide-y divide-slate-100 dark:divide-slate-800">
               {recent.data.map((e) => (

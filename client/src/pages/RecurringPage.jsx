@@ -120,8 +120,8 @@ function BillRow({ bill, onEdit }) {
   const { category, subcategory, amount, frequency, start_date, next_due_date, is_active } = bill;
   const title = billTitle(bill);
   const subtitle = [
-    formatSchedule(frequency, start_date),
     is_active ? `Next: ${formatDueLabel(next_due_date)}` : null,
+    formatSchedule(frequency, start_date),
     title !== (subcategory?.name ?? category.name) ? (subcategory?.name ?? category.name) : null,
   ]
     .filter(Boolean)

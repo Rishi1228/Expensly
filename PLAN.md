@@ -128,11 +128,11 @@ Indexes: `expenses(user_id, expense_date)`, `expenses(user_id, category_id)`.
 
 ### Phase 6 — Polish & Responsive QA
 
-- [ ] Dark mode toggle
-- [ ] Loading skeletons, empty states, error states
-- [ ] Floating quick-add button (mobile)
-- [ ] Accessibility pass (labels, focus, contrast) + test at 360px / 768px / 1280px
-- [ ] Profile page (name, currency display)
+- [x] Dark mode toggle
+- [x] Loading skeletons, empty states, error states
+- [x] Floating quick-add button (mobile)
+- [x] Accessibility pass (labels, focus, contrast) + test at 360px / 768px / 1280px
+- [x] Profile page (name, currency display)
 
 **Done when:** no layout breaks at the three widths, and Lighthouse accessibility scores ≥ 90.
 

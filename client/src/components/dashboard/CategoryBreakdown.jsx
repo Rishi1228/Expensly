@@ -4,6 +4,7 @@ import { ArrowLeft, ChartBar, ChevronRight } from 'lucide-react';
 import { useCategoryBreakdown, useSubcategoryBreakdown } from '../../hooks/useStats.js';
 import { formatMoney } from '../../lib/format.js';
 import CategoryIcon from '../CategoryIcon.jsx';
+import ErrorNote from '../ui/ErrorNote.jsx';
 import Spinner from '../ui/Spinner.jsx';
 import { cardClass } from './StatTile.jsx';
 
@@ -44,11 +45,13 @@ function BarRow({ label, icon, total, share, max, onClick }) {
 /** "Where your money goes": categories ranked by spend; tap one to see its subcategories. */
 export default function CategoryBreakdown({ range, period }) {
   const [selected, setSelected] = useState(null);
-  const { data: categories, isLoading } = useCategoryBreakdown(range);
-  const { data: subs, isLoading: subsLoading } = useSubcategoryBreakdown(
-    range,
-    selected?.category_id,
-  );
+  const { data: categories, isLoading, isError, refetch } = useCategoryBreakdown(range);
+  const {
+    data: subs,
+    isLoading: subsLoading,
+    isError: subsError,
+    refetch: refetchSubs,
+  } = useSubcategoryBreakdown(range, selected?.category_id);
 
   // If the period changes and the drilled-in category has no spend any more, go back up.
   const current = selected && categories?.find((c) => c.category_id === selected.category_id);
@@ -83,6 +86,11 @@ export default function CategoryBreakdown({ range, period }) {
 
       {isLoading || (drill && subsLoading) ? (
         <Spinner />
+      ) : isError || (drill && subsError) ? (
+        <ErrorNote
+          message="Couldn’t load the breakdown."
+          onRetry={isError ? refetch : refetchSubs}
+        />
       ) : !categories?.length ? (
         <div className="flex flex-col items-center py-10 text-center text-sm text-slate-500">
           <ChartBar className="mb-2 size-8 text-slate-400" aria-hidden />

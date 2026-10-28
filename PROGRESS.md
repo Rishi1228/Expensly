@@ -19,6 +19,8 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 ## Changelog
 
+- **2026-10-28**: Phase 6 done. Dark mode, error states, dialog focus handling, forgot/reset/change password, custom categories page, per-page code splitting. Renamed to Expensly. Vercel setup added; code pushed to github.com/Rishi1228/Expensly.
+
 - **2026-10-28**: Phase 5 done. Recurring bills: SQL job on pg_cron (daily 12:05 UTC) + catch-up when the app opens, API, and a Recurring page. `e2e-recurring` script: 40/40, including "due today → exactly one expense, rerun → no duplicate". Checked in Chrome on desktop.
 - **2026-10-28**: Phase 4 done. Stats SQL functions + API (35/35 checks vs hand-computed numbers) and a new dashboard (tiles, trend chart, category breakdown with drill-down). Checked in Chrome on desktop and phone.
 - **2026-10-28**: Phase 3 done. Login/signup, responsive layout, add/edit/delete expenses, filtered list. Tested in Chrome on desktop and at 390px phone width.
@@ -118,14 +120,18 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 ## Phase 6 — Polish & Responsive QA
 
-- [ ] Dark mode
-- [ ] Loading / empty / error states
-- [ ] Quick-add FAB
-- [ ] Accessibility + breakpoint testing
-- [ ] Profile page
+- [x] Dark mode: Light / Dark / System (Profile) + quick toggle in the header/sidebar. Saved per browser; `index.html` applies it before first paint. Toasts follow the theme
+- [x] Loading / empty / error states: inline "Try again" on dashboard cards and Profile; error boundary around each page (resets on navigation) and the whole app
+- [x] Quick-add: center **+** in the phone bottom nav (always visible), "Add expense" in the desktop sidebar
+- [x] Accessibility: dialogs move focus in, keep Tab inside, and return focus on close; "Skip to content" link; radio/pressed roles on chip pickers; labelled icon buttons
+- [x] Profile: account details, theme, Manage categories, Change password, sign out
+- [x] Forgot password (`/forgot-password`) → email link → `/reset-password`
+- [x] Categories page (`/categories`): add custom categories (name, icon, color), add/remove subcategories, delete custom categories (blocked with a clear message if in use)
+- [x] Code splitting: each page is its own chunk. First load ≈ 200 kB gzip (was 313 kB); the chart library (107 kB) loads only with the dashboard
 
-**Notes / Decisions:**
-**Blockers:**
+**Notes / Decisions:** App name is now **Expensly** (matches the repo). Vercel: `api/index.js` exports the Express app; `vercel.json` routes `/api/*` to it and everything else to the SPA.
+**Tested (Chrome):** dark + light on all pages, forgot-password page, Profile theme switch, create category with icon/color, add subcategory, recurring catch-up on login. Phone width checked with 390px frames (window resize doesn't work in this browser): Recurring, Categories, Dashboard, Expenses, in light and dark. Fixed: bill rows cut off the next due date on phones (now shown first); "1 subcategories". No console errors.
+**Blockers:** —
 
 ## Phase 7 — Testing & Deployment
 

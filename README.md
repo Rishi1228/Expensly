@@ -38,6 +38,6 @@ One Vercel project serves both parts: the React build as static files, and the E
    | `VITE_ENABLE_GOOGLE`        | `false` (or `true` once Google sign-in is set up) |
 
 3. Deploy.
-4. In Supabase → Authentication → URL Configuration, set **Site URL** to your Vercel URL and add it to **Redirect URLs**, so sign-up confirmation emails link back to the app.
+4. In Supabase → Authentication → URL Configuration, set **Site URL** to your Vercel URL and add `https://<your-app>.vercel.app/**` to **Redirect URLs** (plus `http://localhost:5173/**` for local dev). Sign-up confirmation and password-reset emails link back to these.
 
 Database migrations are applied separately: `npx supabase db push --db-url "$DATABASE_URL"`. Recurring bills are logged by a `pg_cron` job inside Supabase, so Vercel needs no cron setup.

@@ -1,10 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Suspense, useCallback, useMemo, useState } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { House, List, LogOut, Plus, Repeat, User, Wallet } from 'lucide-react';
 import { useAuth } from '../../context/auth-context.js';
 import { ExpenseDialogContext } from '../../context/expense-dialog.js';
 import { useLogDueRecurring } from '../../hooks/useRecurring.js';
+import ErrorBoundary from '../ErrorBoundary.jsx';
 import ExpenseForm from '../ExpenseForm.jsx';
+import { ThemeButton } from '../ThemeToggle.jsx';
+import Spinner from '../ui/Spinner.jsx';
 import Modal from '../ui/Modal.jsx';
 import Button from '../ui/Button.jsx';
 
@@ -21,13 +24,14 @@ function Logo() {
       <span className="flex size-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
         <Wallet className="size-4" aria-hidden />
       </span>
-      Finance Manager
+      Expensly
     </div>
   );
 }
 
 export default function AppLayout() {
   const { user, signOut } = useAuth();
+  const { pathname } = useLocation();
   useLogDueRecurring(); // log any bills due by the user's local today
   // dialog.key remounts the form so it always starts fresh
   const [dialog, setDialog] = useState({ open: false, expense: null, key: 0 });
@@ -45,11 +49,18 @@ export default function AppLayout() {
 
   return (
     <ExpenseDialogContext.Provider value={ctx}>
+      <a
+        href="#main"
+        className="sr-only z-50 rounded-lg bg-indigo-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to content
+      </a>
       <div className="min-h-dvh md:flex">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-slate-200 bg-white p-4 md:flex dark:border-slate-800 dark:bg-slate-900">
-          <div className="px-2 py-2">
+          <div className="flex items-center justify-between px-2 py-2">
             <Logo />
+            <ThemeButton />
           </div>
           <Button className="mt-6 w-full" onClick={openAdd}>
             <Plus className="size-4" aria-hidden /> Add expense
@@ -83,12 +94,21 @@ export default function AppLayout() {
         </aside>
 
         {/* Mobile header */}
-        <header className="sticky top-0 z-30 flex h-14 items-center border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/90">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/90">
           <Logo />
+          <ThemeButton className="-mr-2" />
         </header>
 
-        <main className="mx-auto w-full max-w-4xl flex-1 px-4 pt-5 pb-28 md:px-8 md:pt-8 md:pb-10">
-          <Outlet />
+        <main
+          id="main"
+          tabIndex={-1}
+          className="focus:outline-none mx-auto w-full max-w-4xl flex-1 px-4 pt-5 pb-28 md:px-8 md:pt-8 md:pb-10"
+        >
+          <ErrorBoundary resetKey={pathname}>
+            <Suspense fallback={<Spinner />}>
+              <Outlet />
+            </Suspense>
+          </ErrorBoundary>
         </main>
 
         {/* Mobile bottom nav */}

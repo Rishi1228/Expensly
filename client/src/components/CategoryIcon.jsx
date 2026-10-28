@@ -1,38 +1,4 @@
-import {
-  Car,
-  CircleEllipsis,
-  Clapperboard,
-  Gift,
-  GraduationCap,
-  HandCoins,
-  HeartPulse,
-  Receipt,
-  ShoppingBag,
-  ShoppingCart,
-  Sparkles,
-  Tag,
-  TrendingUp,
-  Utensils,
-  Wrench,
-} from 'lucide-react';
-
-// Keys match categories.icon in the database seed.
-const ICONS = {
-  utensils: Utensils,
-  car: Car,
-  'shopping-cart': ShoppingCart,
-  receipt: Receipt,
-  wrench: Wrench,
-  clapperboard: Clapperboard,
-  'trending-up': TrendingUp,
-  'hand-coins': HandCoins,
-  'shopping-bag': ShoppingBag,
-  'heart-pulse': HeartPulse,
-  sparkles: Sparkles,
-  gift: Gift,
-  'graduation-cap': GraduationCap,
-  'circle-ellipsis': CircleEllipsis,
-};
+import { iconFor } from '../lib/icons.js';
 
 const sizes = {
   sm: 'size-8 [&>svg]:size-4',
@@ -42,7 +8,7 @@ const sizes = {
 
 /** Category icon in a soft tinted circle. */
 export default function CategoryIcon({ icon, color = '#94a3b8', size = 'md' }) {
-  const Icon = ICONS[icon] || Tag;
+  const Icon = iconFor(icon);
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-full ${sizes[size]}`}

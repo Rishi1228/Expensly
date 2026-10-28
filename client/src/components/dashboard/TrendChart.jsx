@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatMoney, parseISODate } from '../../lib/format.js';
+import ErrorNote from '../ui/ErrorNote.jsx';
 import Spinner from '../ui/Spinner.jsx';
 import { cardClass } from './StatTile.jsx';
 
@@ -38,7 +39,7 @@ function ChartTooltip({ active, payload, granularity }) {
 
 /** Spend per day (short ranges) or per month (long ranges). Single series, so no legend. */
 export default function TrendChart({ query }) {
-  const { data, isLoading } = query;
+  const { data, isLoading, isError, refetch } = query;
   const points = data?.data ?? [];
   const granularity = data?.granularity ?? 'day';
   const hasSpend = points.some((p) => p.total > 0);
@@ -54,6 +55,8 @@ export default function TrendChart({ query }) {
       </h2>
       {isLoading ? (
         <Spinner />
+      ) : isError ? (
+        <ErrorNote message="Couldn’t load the chart." onRetry={refetch} />
       ) : !hasSpend ? (
         <p className="py-10 text-center text-sm text-slate-500">No spending in this period.</p>
       ) : (
