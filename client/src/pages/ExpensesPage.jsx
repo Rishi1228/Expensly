@@ -64,7 +64,9 @@ export default function ExpensesPage() {
     <div>
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Expenses</h1>
+          <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
+            Expenses
+          </h1>
           {!isLoading && (
             <p className="text-sm text-slate-500">
               {total} {total === 1 ? 'expense' : 'expenses'}
@@ -173,12 +175,14 @@ export default function ExpensesPage() {
           {groups.map((g) => (
             <section key={g.date}>
               <div className="mb-2 flex items-baseline justify-between px-1 text-sm">
-                <h2 className="font-medium text-slate-600 dark:text-slate-300">
+                <h2 className="font-bold text-slate-800 dark:text-slate-200">
                   {formatDayLabel(g.date)}
                 </h2>
-                <span className="text-slate-500 tabular-nums">{formatMoney(g.total)}</span>
+                <span className="rounded-full bg-slate-900/[0.04] px-2.5 py-0.5 text-xs font-semibold text-slate-600 tabular-nums dark:bg-white/5 dark:text-slate-300">
+                  {formatMoney(g.total)}
+                </span>
               </div>
-              <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:divide-slate-800 dark:bg-slate-900 dark:ring-slate-800">
+              <div className="card divide-y divide-slate-100 overflow-hidden dark:divide-white/[0.06]">
                 {g.items.map((e) => (
                   <ExpenseRow key={e.id} expense={e} onClick={() => openEdit(e)} />
                 ))}

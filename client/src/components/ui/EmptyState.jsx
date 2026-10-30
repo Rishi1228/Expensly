@@ -1,8 +1,12 @@
 export default function EmptyState({ icon: Icon, title, message, action }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center dark:border-slate-700">
-      {Icon && <Icon className="mb-3 size-10 text-slate-400" aria-hidden />}
-      <p className="font-medium">{title}</p>
+    <div className="card flex flex-col items-center px-6 py-14 text-center">
+      {Icon && (
+        <span className="bg-brand mb-4 flex size-14 items-center justify-center rounded-2xl text-white shadow-glow">
+          <Icon className="size-7" aria-hidden />
+        </span>
+      )}
+      <p className="text-lg font-semibold">{title}</p>
       {message && <p className="mt-1 max-w-xs text-sm text-slate-500">{message}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

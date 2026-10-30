@@ -8,7 +8,7 @@ export default function PeriodChips({ value, onChange }) {
       role="radiogroup"
       aria-label="Period"
     >
-      <div className="flex w-max gap-2">
+      <div className="flex w-max gap-1 rounded-2xl bg-slate-900/[0.04] p-1 ring-1 ring-slate-200/70 dark:bg-white/[0.04] dark:ring-white/[0.06]">
         {DASHBOARD_PERIODS.map((p) => (
           <button
             key={p.value}
@@ -16,10 +16,10 @@ export default function PeriodChips({ value, onChange }) {
             role="radio"
             aria-checked={value === p.value}
             onClick={() => onChange(p.value)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium whitespace-nowrap ring-1 transition-colors ${
+            className={`rounded-xl px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap transition-all ${
               value === p.value
-                ? 'bg-slate-900 text-white ring-slate-900 dark:bg-white dark:text-slate-900 dark:ring-white'
-                : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800'
+                ? 'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/80 dark:bg-slate-800 dark:text-white dark:ring-white/10'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
             {p.label}

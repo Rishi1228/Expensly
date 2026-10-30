@@ -4,7 +4,9 @@ import ErrorNote from '../ui/ErrorNote.jsx';
 import Spinner from '../ui/Spinner.jsx';
 import { cardClass } from './StatTile.jsx';
 
-const BAR = '#6366f1'; // validated against white and slate-900 surfaces
+// Bars fade from indigo (#6366f1, validated on white and dark surfaces) to violet.
+const BAR_TOP = '#8b5cf6';
+const BAR_BOTTOM = '#6366f1';
 const TICK = { fill: '#64748b', fontSize: 11 };
 
 const compactMoney = (v) =>
@@ -27,9 +29,9 @@ function ChartTooltip({ active, payload, granularity }) {
   if (!active || !payload?.length) return null;
   const p = payload[0].payload;
   return (
-    <div className="rounded-lg bg-white px-3 py-2 text-sm text-slate-900 shadow-lg ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-700">
+    <div className="rounded-xl bg-white/95 px-3.5 py-2.5 text-sm text-slate-900 shadow-xl ring-1 ring-slate-200 backdrop-blur dark:bg-slate-800/95 dark:text-slate-100 dark:ring-white/10">
       <p className="text-xs text-slate-500">{bucketLabel(p.bucket, granularity, true)}</p>
-      <p className="font-semibold tabular-nums">{formatMoney(p.total)}</p>
+      <p className="text-base font-bold tabular-nums">{formatMoney(p.total)}</p>
       <p className="text-xs text-slate-500">
         {p.count} {p.count === 1 ? 'expense' : 'expenses'}
       </p>
@@ -50,9 +52,19 @@ export default function TrendChart({ query }) {
 
   return (
     <section className={cardClass} aria-labelledby="trend-title">
-      <h2 id="trend-title" className="mb-3 font-medium">
-        {title}
-      </h2>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h2 id="trend-title" className="text-base font-bold tracking-tight">
+          {title}
+        </h2>
+        {hasSpend && (
+          <p className="text-xs text-slate-500">
+            Peak{' '}
+            <span className="font-semibold text-slate-700 tabular-nums dark:text-slate-200">
+              {formatMoney(Math.max(...points.map((p) => p.total)))}
+            </span>
+          </p>
+        )}
+      </div>
       {isLoading ? (
         <Spinner />
       ) : isError ? (
@@ -61,14 +73,20 @@ export default function TrendChart({ query }) {
         <p className="py-10 text-center text-sm text-slate-500">No spending in this period.</p>
       ) : (
         <>
-          <div className="h-56 text-slate-200 dark:text-slate-800" aria-hidden>
+          <div className="h-60 text-slate-200/80 dark:text-white/[0.06]" aria-hidden>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={points}
                 margin={{ top: 4, right: 4, bottom: 0, left: 0 }}
                 barCategoryGap="20%"
               >
-                <CartesianGrid vertical={false} stroke="currentColor" />
+                <defs>
+                  <linearGradient id="trend-bar" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stopColor={BAR_TOP} />
+                    <stop offset="1" stopColor={BAR_BOTTOM} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="currentColor" strokeDasharray="4 4" />
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(v) => bucketLabel(v, granularity)}
@@ -87,9 +105,9 @@ export default function TrendChart({ query }) {
                 />
                 <Tooltip
                   content={<ChartTooltip granularity={granularity} />}
-                  cursor={{ fill: 'currentColor', opacity: 0.5 }}
+                  cursor={{ fill: 'currentColor', opacity: 0.6, radius: 6 }}
                 />
-                <Bar dataKey="total" fill={BAR} radius={[4, 4, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="total" fill="url(#trend-bar)" radius={[6, 6, 2, 2]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
           </div>

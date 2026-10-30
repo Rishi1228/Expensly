@@ -12,7 +12,9 @@ export default function NoFamily({ receivedInvites }) {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold">Family</h1>
+        <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
+          Family
+        </h1>
         <p className="text-sm text-slate-500">
           Track spending together. Everyone logs their own expenses; the dashboard shows the family
           total and each person’s share.
@@ -49,7 +51,7 @@ function ReceivedInvites({ invites }) {
         <Mail className="size-4 text-indigo-600 dark:text-indigo-400" aria-hidden />
         {invites.length === 1 ? 'You have an invite' : `You have ${invites.length} invites`}
       </h2>
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+      <ul className="divide-y divide-slate-100 dark:divide-white/[0.06]">
         {invites.map((inv) => (
           <li
             key={inv.id}
@@ -113,7 +115,7 @@ function CreateFamily() {
           <Users className="size-5" aria-hidden />
         </span>
         <div>
-          <h2 id="create-title" className="font-medium">
+          <h2 id="create-title" className="text-base font-bold tracking-tight">
             Start a family
           </h2>
           <p className="text-sm text-slate-500">

@@ -1,7 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { ChartColumn, Users } from 'lucide-react';
 import { useFamily } from '../hooks/useFamily.js';
-import { headPillClass } from '../lib/family.js';
 import FamilyDashboard from '../components/family/FamilyDashboard.jsx';
 import FamilyMembers from '../components/family/FamilyMembers.jsx';
 import NoFamily from '../components/family/NoFamily.jsx';
@@ -36,9 +35,13 @@ export default function FamilyPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold">
+        <h1 className="flex items-center gap-2 text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
           <span className="truncate">{family.name}</span>
-          {isHead && <span className={`${headPillClass} shrink-0 text-xs`}>You’re the head</span>}
+          {isHead && (
+            <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold tracking-normal text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
+              You’re the head
+            </span>
+          )}
         </h1>
         <p className="text-sm text-slate-500">
           {members.length} {members.length === 1 ? 'member' : 'members'} ·{' '}

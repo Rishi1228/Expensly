@@ -11,20 +11,23 @@ export default function BarRow({ label, icon, total, share, max, onClick, badge 
   return (
     <Tag
       {...(onClick && { type: 'button', onClick })}
-      className={`group flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left ${onClick ? 'hover:bg-slate-50 dark:hover:bg-slate-800/60' : ''}`}
+      className={`group flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left transition-colors ${onClick ? 'hover:bg-slate-900/[0.03] dark:hover:bg-white/[0.04]' : ''}`}
     >
       {icon}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2 text-sm">
           <span className="flex min-w-0 items-center gap-1.5">
-            <span className="truncate font-medium">{label}</span>
+            <span className="truncate font-semibold">{label}</span>
             {badge}
           </span>
-          <span className="shrink-0 font-semibold tabular-nums">{formatMoney(total)}</span>
+          <span className="shrink-0 font-bold tabular-nums">{formatMoney(total)}</span>
         </div>
         <div className="mt-1.5 flex items-center gap-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            <div className="h-full rounded-full bg-[#6366f1]" style={{ width: `${width}%` }} />
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.06]">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] transition-[width] duration-500"
+              style={{ width: `${width}%` }}
+            />
           </div>
           <span className="w-10 shrink-0 text-right text-xs text-slate-500 tabular-nums">
             {Math.round(share)}%

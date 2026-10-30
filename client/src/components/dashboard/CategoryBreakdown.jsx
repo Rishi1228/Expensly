@@ -38,20 +38,20 @@ export default function CategoryBreakdown({
           <button
             type="button"
             onClick={() => setSelected(null)}
-            className="-ml-1 flex items-center gap-1 rounded-lg px-1 py-0.5 font-medium hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="-ml-1 flex items-center gap-1.5 rounded-lg px-1.5 py-0.5 font-bold tracking-tight hover:bg-slate-100 dark:hover:bg-white/5"
           >
             <ArrowLeft className="size-4" aria-hidden />
             <span id="breakdown-title">{drill.name}</span>
           </button>
         ) : (
-          <h2 id="breakdown-title" className="font-medium">
+          <h2 id="breakdown-title" className="text-base font-bold tracking-tight">
             {title}
           </h2>
         )}
         {drill && scope === PERSONAL && (
           <Link
             to={`/expenses?category=${drill.category_id}&period=${period}`}
-            className="text-sm font-medium text-indigo-600 dark:text-indigo-400"
+            className="text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-300"
           >
             View expenses
           </Link>

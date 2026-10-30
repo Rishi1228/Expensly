@@ -18,9 +18,8 @@ import Field, { inputClass } from '../ui/Field.jsx';
 import Switch from '../ui/Switch.jsx';
 import MemberAvatar from './MemberAvatar.jsx';
 
-const cardClass =
-  'overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800';
-const sectionTitle = 'mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300';
+const cardClass = 'card overflow-hidden';
+const sectionTitle = 'eyebrow mb-2.5 px-1';
 const dayOf = (ts) => formatDayLabel(toISODate(new Date(ts)));
 
 /** Members, invites, and settings. Head-only controls are shown only to the head. */
@@ -34,7 +33,7 @@ export default function FamilyMembers({ data }) {
         <h2 id="members-title" className={sectionTitle}>
           Members ({members.length})
         </h2>
-        <ul className={`${cardClass} divide-y divide-slate-100 dark:divide-slate-800`}>
+        <ul className={`${cardClass} divide-y divide-slate-100 dark:divide-white/[0.06]`}>
           {members.map((m) => (
             <MemberItem key={m.user_id} member={m} canManage={isHead && !m.is_me} />
           ))}

@@ -14,8 +14,12 @@ import { cardClass } from '../components/dashboard/StatTile.jsx';
 import SummaryTiles from '../components/dashboard/SummaryTiles.jsx';
 import TrendChart from '../components/dashboard/TrendChart.jsx';
 import Button from '../components/ui/Button.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
 import ErrorNote from '../components/ui/ErrorNote.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
+
+const greeting = (h = new Date().getHours()) =>
+  h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 
 export default function DashboardPage() {
   const { openAdd, openEdit } = useExpenseDialog();
@@ -35,31 +39,50 @@ export default function DashboardPage() {
   const periodLabel = DASHBOARD_PERIODS.find((p) => p.value === period).label.toLowerCase();
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">{firstName ? `Hi, ${firstName}` : 'Dashboard'}</h1>
-          <p className="text-sm text-slate-500">Here’s where your money went {periodLabel}.</p>
-        </div>
-        <div className="hidden md:block">
-          <Button onClick={openAdd}>
-            <Plus className="size-4" aria-hidden /> Add expense
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow={new Date().toLocaleDateString('en-IN', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+        })}
+        title={
+          <>
+            {greeting()}
+            {firstName && (
+              <>
+                , <span className="text-brand">{firstName}</span>
+              </>
+            )}
+          </>
+        }
+        description={`Here’s where your money went ${periodLabel}.`}
+        actions={
+          <div className="hidden md:block">
+            <Button onClick={openAdd}>
+              <Plus className="size-4" aria-hidden /> Add expense
+            </Button>
+          </div>
+        }
+      />
 
       <PeriodChips value={period} onChange={setPeriod} />
 
-      <SummaryTiles query={summary} period={period} />
+      <SummaryTiles
+        query={summary}
+        period={period}
+        trend={trend}
+        spentLabel={`Spent · ${DASHBOARD_PERIODS.find((p) => p.value === period).label}`}
+      />
 
       <TrendChart query={trend} />
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <CategoryBreakdown key={period} range={range} period={period} />
 
         <section className={cardClass} aria-labelledby="recent-title">
           <div className="mb-1 flex items-center justify-between">
-            <h2 id="recent-title" className="font-medium">
+            <h2 id="recent-title" className="text-base font-bold tracking-tight">
               Recent expenses
             </h2>
             <Link
@@ -74,7 +97,7 @@ export default function DashboardPage() {
           ) : recentQuery.isError ? (
             <ErrorNote message="Couldn’t load recent expenses." onRetry={recentQuery.refetch} />
           ) : recent?.data.length ? (
-            <div className="-mx-4 divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="-mx-4 divide-y divide-slate-100 dark:divide-white/[0.06]">
               {recent.data.map((e) => (
                 <ExpenseRow key={e.id} expense={e} onClick={() => openEdit(e)} />
               ))}

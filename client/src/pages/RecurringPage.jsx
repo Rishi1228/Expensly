@@ -11,8 +11,7 @@ import EmptyState from '../components/ui/EmptyState.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 
-const listClass =
-  'divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:divide-slate-800 dark:bg-slate-900 dark:ring-slate-800';
+const listClass = 'card divide-y divide-slate-100 overflow-hidden dark:divide-white/[0.06]';
 
 const billTitle = (b) => b.description || b.subcategory?.name || b.category.name;
 
@@ -33,7 +32,9 @@ export default function RecurringPage() {
     <div>
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Recurring bills</h1>
+          <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
+            Recurring bills
+          </h1>
           <p className="text-sm text-slate-500">
             Logged as expenses automatically on each due date.
           </p>
@@ -61,12 +62,22 @@ export default function RecurringPage() {
         />
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-3">
-            <StatTile
-              label="Per month (approx.)"
-              value={formatMoney(Math.round(perMonth))}
-              footnote={`From ${active.length} active ${active.length === 1 ? 'bill' : 'bills'}`}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-brand relative min-w-0 overflow-hidden rounded-3xl p-5 text-white shadow-glow">
+              <div
+                className="absolute -top-12 -right-8 size-36 rounded-full bg-white/15 blur-2xl"
+                aria-hidden
+              />
+              <p className="relative text-[11px] font-semibold tracking-[0.08em] text-white/75 uppercase">
+                Per month (approx.)
+              </p>
+              <p className="relative mt-2 truncate text-2xl font-extrabold tracking-tight tabular-nums sm:text-3xl">
+                {formatMoney(Math.round(perMonth))}
+              </p>
+              <p className="relative mt-1 truncate text-xs text-white/80">
+                From {active.length} active {active.length === 1 ? 'bill' : 'bills'}
+              </p>
+            </div>
             <StatTile
               label="Next bill"
               value={next ? formatDueLabel(next.next_due_date) : '—'}
@@ -78,9 +89,7 @@ export default function RecurringPage() {
 
           {active.length > 0 && (
             <section>
-              <h2 className="mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300">
-                Active
-              </h2>
+              <h2 className="eyebrow mb-2.5 px-1">Active</h2>
               <div className={listClass}>
                 {active.map((b) => (
                   <BillRow key={b.id} bill={b} onEdit={() => openEdit(b)} />
@@ -91,9 +100,7 @@ export default function RecurringPage() {
 
           {paused.length > 0 && (
             <section>
-              <h2 className="mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300">
-                Paused
-              </h2>
+              <h2 className="eyebrow mb-2.5 px-1">Paused</h2>
               <div className={listClass}>
                 {paused.map((b) => (
                   <BillRow key={b.id} bill={b} onEdit={() => openEdit(b)} />
@@ -146,7 +153,7 @@ function BillRow({ bill, onEdit }) {
       <button
         type="button"
         onClick={onEdit}
-        className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+        className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-4 text-left transition-colors hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.03]"
       >
         <CategoryIcon icon={category.icon} color={category.color} />
         <div className="min-w-0 flex-1">

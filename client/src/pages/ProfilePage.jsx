@@ -11,11 +11,10 @@ import ErrorNote from '../components/ui/ErrorNote.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 
-const cardClass =
-  'divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:divide-slate-800 dark:bg-slate-900 dark:ring-slate-800';
+const cardClass = 'card divide-y divide-slate-100 overflow-hidden dark:divide-white/[0.06]';
 
 const rowClass =
-  'flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60';
+  'flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.03]';
 
 export default function ProfilePage() {
   const { signOut } = useAuth();
@@ -32,13 +31,12 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Profile</h1>
+      <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
+        Profile
+      </h1>
 
       <section aria-labelledby="account-title">
-        <h2
-          id="account-title"
-          className="mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300"
-        >
+        <h2 id="account-title" className="eyebrow mb-2.5 px-1">
           Account
         </h2>
         {isLoading ? (
@@ -48,26 +46,39 @@ export default function ProfilePage() {
             <ErrorNote message="Couldn’t load your profile." onRetry={refetch} />
           </div>
         ) : (
-          <dl className={cardClass}>
-            {[
-              ['Name', me?.profile?.full_name || '—'],
-              ['Email', me?.email],
-              ['Currency', me?.profile?.currency],
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-4 px-4 py-3 text-sm">
-                <dt className="text-slate-500">{k}</dt>
-                <dd className="truncate font-medium">{v}</dd>
+          <div className={cardClass}>
+            <div className="flex items-center gap-4 p-5">
+              <span
+                className="bg-brand flex size-14 shrink-0 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-glow"
+                aria-hidden
+              >
+                {(me?.profile?.full_name || me?.email || '?')[0].toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-lg font-bold tracking-tight">
+                  {me?.profile?.full_name || 'Your account'}
+                </p>
+                <p className="truncate text-sm text-slate-500">{me?.email}</p>
               </div>
-            ))}
-          </dl>
+            </div>
+            <dl className="divide-y divide-slate-100 dark:divide-white/[0.06]">
+              {[
+                ['Name', me?.profile?.full_name || '—'],
+                ['Email', me?.email],
+                ['Currency', me?.profile?.currency],
+              ].map(([k, v]) => (
+                <div key={k} className="flex justify-between gap-4 px-4 py-3 text-sm">
+                  <dt className="text-slate-500">{k}</dt>
+                  <dd className="truncate font-medium">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         )}
       </section>
 
       <section aria-labelledby="appearance-title">
-        <h2
-          id="appearance-title"
-          className="mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300"
-        >
+        <h2 id="appearance-title" className="eyebrow mb-2.5 px-1">
           Appearance
         </h2>
         <div className={`${cardClass} flex flex-wrap items-center justify-between gap-3 px-4 py-3`}>
@@ -77,10 +88,7 @@ export default function ProfilePage() {
       </section>
 
       <section aria-labelledby="settings-title">
-        <h2
-          id="settings-title"
-          className="mb-2 px-1 text-sm font-medium text-slate-600 dark:text-slate-300"
-        >
+        <h2 id="settings-title" className="eyebrow mb-2.5 px-1">
           Settings
         </h2>
         <div className={cardClass}>

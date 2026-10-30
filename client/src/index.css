@@ -3,7 +3,27 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* Dark surfaces: deep ink-navy instead of flat grey-blue */
+  --color-slate-800: #1c2236;
+  --color-slate-900: #11152a;
+  --color-slate-950: #080b18;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.06);
+  --shadow-glow: 0 8px 24px -6px rgb(99 102 241 / 0.55);
+
+  --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 html,
@@ -13,7 +33,60 @@ body,
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+  @apply bg-[#f5f6fb] text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Soft brand glows behind everything (decorative, fixed while scrolling) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40rem 28rem at 85% -8%, rgb(139 92 246 / 0.13), transparent 70%),
+    radial-gradient(36rem 26rem at 0% 0%, rgb(99 102 241 / 0.1), transparent 70%);
+}
+.dark body::before {
+  background:
+    radial-gradient(40rem 28rem at 85% -8%, rgb(139 92 246 / 0.16), transparent 70%),
+    radial-gradient(36rem 26rem at 0% 0%, rgb(99 102 241 / 0.12), transparent 70%);
+}
+
+/* ---------------------------------------------------------------------------
+   Design utilities (use these instead of repeating long class strings)
+--------------------------------------------------------------------------- */
+
+/* Standard content card */
+@utility card {
+  @apply rounded-3xl bg-white/90 shadow-card ring-1 ring-slate-200/70 backdrop-blur-sm dark:bg-slate-900/80 dark:shadow-none dark:ring-white/[0.06];
+}
+
+/* Brand gradient fill (logo, hero, primary actions) */
+@utility bg-brand {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #c026d3 120%);
+}
+
+/* Gradient text for big headline numbers */
+@utility text-brand {
+  background-image: linear-gradient(135deg, #4f46e5, #9333ea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  .dark & {
+    background-image: linear-gradient(135deg, #a5b4fc, #d8b4fe);
+  }
+}
+
+/* Frosted glass bars (mobile header, bottom nav, sidebar) */
+@utility glass {
+  @apply bg-white/75 backdrop-blur-xl backdrop-saturate-150 dark:bg-slate-900/70;
+}
+
+/* Small uppercase label above a number */
+@utility eyebrow {
+  @apply text-[11px] font-semibold tracking-[0.08em] text-slate-500 uppercase dark:text-slate-400;
 }
 
 /* Horizontal chip rows: scroll by swipe/drag without a visible scrollbar */
@@ -21,5 +94,20 @@ body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
   }
 }

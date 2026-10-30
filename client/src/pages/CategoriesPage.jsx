@@ -30,8 +30,7 @@ const COLORS = [
   '#64748b',
 ];
 
-const cardClass =
-  'overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800';
+const cardClass = 'card overflow-hidden';
 
 const errorText = (e, what) =>
   e.status === 409 && e.message === 'Already exists'
@@ -52,7 +51,9 @@ export default function CategoriesPage() {
       </Link>
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Categories</h1>
+          <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight md:text-3xl">
+            Categories
+          </h1>
           <p className="text-sm text-slate-500">Add your own categories and subcategories.</p>
         </div>
         <Button onClick={() => setAdding(true)} className="shrink-0">
@@ -71,7 +72,7 @@ export default function CategoriesPage() {
           action={<Button onClick={() => refetch()}>Try again</Button>}
         />
       ) : (
-        <div className={`${cardClass} divide-y divide-slate-100 dark:divide-slate-800`}>
+        <div className={`${cardClass} divide-y divide-slate-100 dark:divide-white/[0.06]`}>
           {categories.map((c) => (
             <CategoryItem key={c.id} category={c} />
           ))}
@@ -110,7 +111,7 @@ function CategoryItem({ category }) {
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+          className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-4 text-left transition-colors hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.03]"
         >
           <CategoryIcon icon={category.icon} color={category.color} size="sm" />
           <span className="min-w-0 flex-1">

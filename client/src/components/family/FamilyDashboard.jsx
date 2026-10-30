@@ -38,7 +38,7 @@ export default function FamilyDashboard({ data }) {
   const who = member ? (member.is_me ? 'You' : memberName(member)) : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PeriodChips value={period} onChange={setPeriod} />
 
       {visible.length > 1 && (
@@ -84,6 +84,7 @@ export default function FamilyDashboard({ data }) {
       <SummaryTiles
         query={summary}
         period={period}
+        trend={trend}
         spentLabel={who ? `${who} spent` : 'Family spent'}
       />
 
@@ -91,7 +92,7 @@ export default function FamilyDashboard({ data }) {
 
       <TrendChart query={trend} />
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <CategoryBreakdown
           key={`${period}-${member?.user_id ?? 'all'}`}
           range={range}
@@ -173,7 +174,7 @@ function RecentFamilyExpenses({ range, member, restricted, myId }) {
       ) : isError ? (
         <ErrorNote message="Couldn’t load expenses." onRetry={refetch} />
       ) : data?.data.length ? (
-        <div className="-mx-4 divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="-mx-4 divide-y divide-slate-100 dark:divide-white/[0.06]">
           {data.data.map((e) => (
             <ExpenseRow
               key={e.id}
