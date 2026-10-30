@@ -41,8 +41,8 @@ export default function App() {
             <Suspense fallback={<FullPageSpinner />}>
               <Routes>
                 <Route element={<PublicOnlyRoute />}>
-                  <Route path="/login" element={<AuthPage mode="login" />} />
-                  <Route path="/signup" element={<AuthPage mode="signup" />} />
+                  <Route path="/login" element={<AuthPage key="login" mode="login" />} />
+                  <Route path="/signup" element={<AuthPage key="signup" mode="signup" />} />
                   <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 </Route>
                 {/* The reset link signs the user in, so this page sits outside the guards */}
