@@ -101,20 +101,23 @@ function MemberItem({ member, canManage }) {
   const name = memberName(member);
 
   return (
-    <li className="flex flex-wrap items-center gap-3 px-4 py-3">
+    <li className="flex items-center gap-3 px-4 py-3">
       <MemberAvatar name={name} />
       <div className="min-w-0 flex-1">
-        <p className="flex items-center gap-1.5 font-medium">
-          <span className="truncate">{name}</span>
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+          <span className="font-semibold break-words">{name}</span>
           {member.is_head && <span className={headPillClass}>Head</span>}
           {member.is_me && <span className={pillClass}>You</span>}
         </p>
-        <p className="truncate text-sm text-slate-500">
-          {member.email} · joined {dayOf(member.joined_at)}
+        <p className="truncate text-sm text-slate-500" title={member.email}>
+          {member.email}
+        </p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">
+          Joined {dayOf(member.joined_at)}
         </p>
       </div>
       {canManage && (
-        <div className="flex gap-1">
+        <div className="flex shrink-0 flex-col items-end gap-1 min-[400px]:flex-row min-[400px]:items-center">
           <ConfirmButton
             label={`Make ${name} the head`}
             confirmLabel="Make head?"
@@ -205,7 +208,7 @@ function InviteItem({ invite, canCancel }) {
   return (
     <li className="flex items-center gap-3 rounded-xl bg-slate-50 py-2 pr-2 pl-3 text-sm dark:bg-slate-800/60">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{invite.email}</p>
+        <p className="font-medium break-all">{invite.email}</p>
         <p className="truncate text-xs text-slate-500">
           {invite.invited_by_name ? `Invited by ${invite.invited_by_name} · ` : ''}
           {dayOf(invite.created_at)}

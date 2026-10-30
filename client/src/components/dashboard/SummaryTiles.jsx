@@ -63,7 +63,7 @@ function Hero({ s, loading, label, period, trend }) {
 }
 
 const tileIcon = (Icon) => (
-  <span className="flex size-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:bg-indigo-400/10 dark:text-indigo-300">
+  <span className="hidden size-8 shrink-0 items-center justify-center rounded-xl sm:flex bg-indigo-500/10 text-indigo-600 dark:bg-indigo-400/10 dark:text-indigo-300">
     <Icon className="size-4" aria-hidden />
   </span>
 );
@@ -101,7 +101,8 @@ export default function SummaryTiles({ query, period, spentLabel = 'Spent', tren
                 </span>
               </p>
               <p className="mt-1 truncate text-xs text-slate-500">
-                {formatMoney(s.top_category.total)} · {Math.round(s.top_category.share)}% of spend
+                {formatMoney(s.top_category.total)} · {Math.round(s.top_category.share)}%
+                <span className="hidden sm:inline"> of spend</span>
               </p>
             </>
           ) : (

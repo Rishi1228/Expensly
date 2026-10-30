@@ -179,7 +179,7 @@ function RecentFamilyExpenses({ range, member, restricted, myId }) {
             <ExpenseRow
               key={e.id}
               expense={e}
-              memberName={member ? undefined : e.member.name}
+              memberName={member || restricted ? undefined : e.member.name}
               onClick={e.member.user_id === myId ? () => openEdit(e) : undefined}
             />
           ))}
