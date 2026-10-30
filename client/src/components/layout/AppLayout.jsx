@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useMemo, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { House, List, LogOut, Plus, Repeat, User, Wallet } from 'lucide-react';
+import { House, List, LogOut, Plus, Repeat, User, Users, Wallet } from 'lucide-react';
 import { useAuth } from '../../context/auth-context.js';
 import { ExpenseDialogContext } from '../../context/expense-dialog.js';
 import { useLogDueRecurring } from '../../hooks/useRecurring.js';
@@ -15,8 +15,14 @@ const NAV = [
   { to: '/', label: 'Dashboard', icon: House, end: true },
   { to: '/expenses', label: 'Expenses', icon: List },
   { to: '/recurring', label: 'Recurring', icon: Repeat },
+  { to: '/family', label: 'Family', icon: Users },
   { to: '/profile', label: 'Profile', icon: User },
 ];
+
+// Phones have room for four links around the + button; Recurring is reached from Profile.
+const MOBILE_NAV = NAV.filter((n) => n.to !== '/recurring').map((n) =>
+  n.to === '/' ? { ...n, label: 'Home' } : n,
+);
 
 function Logo() {
   return (
@@ -117,7 +123,7 @@ export default function AppLayout() {
           aria-label="Main"
         >
           <div className="grid h-16 grid-cols-5">
-            {NAV.slice(0, 2).map((item) => (
+            {MOBILE_NAV.slice(0, 2).map((item) => (
               <BottomNavLink key={item.to} {...item} />
             ))}
             <div className="flex items-center justify-center">
@@ -129,7 +135,7 @@ export default function AppLayout() {
                 <Plus className="size-7" aria-hidden />
               </button>
             </div>
-            {NAV.slice(2).map((item) => (
+            {MOBILE_NAV.slice(2).map((item) => (
               <BottomNavLink key={item.to} {...item} />
             ))}
           </div>

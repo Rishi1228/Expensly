@@ -18,3 +18,10 @@ I want clean UI, Mobile view also so make it responsive.
 
 The Dashboard for analytics should be clear.
 You have to make a plan to make this project, Divide the project into phases, and achieve the final goal.
+
+i want to add a new feature for family
+this feature would let people add their family members into their family group
+aand they would all put their individual expenses.
+let there be a head which will add all people, anyone can add anyone but removing is only permissoned for the head. 
+the head will give permission to view {whether everyone can view everyone's expenses or it will be restriced, the head can view everyone's}
+the dashboard will show both family's total and individual.

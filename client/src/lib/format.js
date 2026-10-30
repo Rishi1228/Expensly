@@ -58,6 +58,9 @@ export const PERIODS = [
   { value: 'custom', label: 'Custom range' },
 ];
 
+/** The presets offered on the dashboards (no custom range). */
+export const DASHBOARD_PERIODS = PERIODS.filter((p) => p.value !== 'custom');
+
 /** Date range for a preset period, as ISO dates ({} for all time). */
 export function periodRange(period, now = new Date()) {
   const y = now.getFullYear();
@@ -73,6 +76,21 @@ export function periodRange(period, now = new Date()) {
       return { from: toISODate(new Date(y, 0, 1)), to: toISODate(new Date(y, 11, 31)) };
     default:
       return {};
+  }
+}
+
+/** Footnote for the "Change" tile, e.g. 'vs September (₹12,400)'. */
+export function comparisonLabel(period, previous) {
+  if (!previous) return 'No earlier period to compare';
+  const d = parseISODate(previous.from);
+  switch (period) {
+    case 'this-month':
+    case 'last-month':
+      return `vs ${d.toLocaleDateString('en-IN', { month: 'long' })} (${formatMoney(previous.total)})`;
+    case 'this-year':
+      return `vs ${d.getFullYear()} (${formatMoney(previous.total)})`;
+    default:
+      return `vs previous 3 months (${formatMoney(previous.total)})`;
   }
 }
 

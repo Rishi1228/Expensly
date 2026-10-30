@@ -148,6 +148,94 @@ Indexes: `expenses(user_id, expense_date)`, `expenses(user_id, category_id)`.
 
 ---
 
+## Family Groups (phases 8–12)
+
+> Source: the "family" section of [IDEA.md](IDEA.md).
+
+**Rules**
+
+- A user belongs to **at most one family**. Whoever creates it becomes the **head**.
+- **Any member can invite** someone by email. The invitee must **accept** before joining (joining lets the head see their expenses, so it never happens silently). Invites to emails without an account wait until that person signs up.
+- **Only the head** can remove members, change the view setting, rename the family, hand over headship, or delete the family. Members (not the head) can leave.
+- **View setting** (head chooses):
+  - **Everyone sees everyone**: all members see each member's totals, breakdowns and expenses.
+  - **Restricted** (default): the head sees everyone; other members see the family's combined total, category breakdown and trend, plus their own numbers. Everyone else shows up only as one combined "Other members" row.
+- Each person still logs **their own** expenses; family members can never edit or delete someone else's expense.
+- Personal pages (Dashboard, Expenses, Recurring) stay personal and unchanged.
+
+**New tables**
+
+| Table            | Key Columns                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| `families`       | `id`, `name`, `head_id`, `members_can_view_all` (default false), `created_at`                |
+| `family_members` | `family_id`, `user_id` (**unique**: one family per user), `joined_at`                        |
+| `family_invites` | `id`, `family_id`, `email` (lower-case), `invited_by`, `created_at`; unique per family+email |
+
+All family reads go through SECURITY DEFINER SQL functions that check membership and the view setting themselves, so the existing RLS on `expenses` stays "own rows only".
+
+**New API routes**
+
+| Method | Route                                                                      | Who            | Purpose                                                    |
+| ------ | -------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------- |
+| GET    | `/api/family`                                                              | anyone         | My family, members, my role, pending invites I've received |
+| POST   | `/api/family`                                                              | no family yet  | Create a family (I become head)                            |
+| PUT    | `/api/family`                                                              | head           | Rename / change view setting                               |
+| DELETE | `/api/family`                                                              | head           | Delete the family                                          |
+| POST   | `/api/family/invites`                                                      | member         | Invite by email                                            |
+| DELETE | `/api/family/invites/:id`                                                  | head / inviter | Cancel an invite                                           |
+| POST   | `/api/family/invites/:id/accept\|decline`                                  | invitee        | Respond to an invite                                       |
+| DELETE | `/api/family/members/:userId`                                              | head           | Remove a member                                            |
+| POST   | `/api/family/leave`                                                        | member         | Leave (head must hand over or delete first)                |
+| POST   | `/api/family/transfer`                                                     | head           | Make another member the head                               |
+| GET    | `/api/family/stats/summary\|by-member\|by-category\|by-subcategory\|trend` | member         | Family analytics (`?member=` for one person)               |
+| GET    | `/api/family/expenses`                                                     | member         | Expenses of members I'm allowed to see                     |
+
+### Phase 8 — Family: Database & Permissions
+
+- [x] Migration: `families`, `family_members`, `family_invites` + indexes, RLS (read-only for members; all writes via functions)
+- [x] Helper functions: `my_family_id()`, `is_family_head()`, `family_visible_members()`
+- [x] Action functions with the rules above: create, invite, accept/decline, cancel invite, remove, leave, transfer, update settings, delete
+- [x] Family analytics functions: total, by member (with "Other members" row), by category, by subcategory, trend, expense list
+
+**Done when:** a restricted member can't read another member's expenses through any function, and a non-head can't remove anyone.
+
+### Phase 9 — Family: API
+
+- [x] Zod schemas + routes/controllers for family management
+- [x] Family stats + family expenses routes (same response shapes as personal stats)
+- [x] Map function errors to clear 400/403/404/409 messages
+
+**Done when:** every route above works and rule violations return clear errors.
+
+### Phase 10 — Family: Management UI
+
+- [x] "Family" in the navigation (sidebar + phone bottom nav)
+- [x] No family: create one, and see/accept/decline invites I've received
+- [x] Family page: members list (head badge), invite by email, pending invites
+- [x] Head-only controls: view setting toggle, rename, remove member, make head, delete family; members: leave
+
+**Done when:** two users can form a family end-to-end in the browser on desktop and phone.
+
+### Phase 11 — Family Dashboard
+
+- [x] Family view on the Family page: family total, change vs previous period, avg/day, top category
+- [x] "Who spent what" ranked per-member bars; tap a member to filter the whole view to them
+- [x] Family category breakdown (with drill-down) and trend chart, reusing the personal components
+- [x] Recent family expenses with the member's name on each row
+- [x] Period chips like the personal dashboard
+
+**Done when:** family numbers equal the sum of the members' personal numbers, and restricted members see only what the rules allow.
+
+### Phase 12 — Family: Tests & QA
+
+- [x] DB tests: permission rules (invite/accept, head-only actions, one family per user, restricted vs open visibility, non-member blocked) and family stats numbers
+- [x] Unit tests for the new schemas; component tests for the family page states
+- [ ] Browser check at phone and desktop widths, light and dark
+
+**Done when:** `npm test`, `npm run test:db` and lint pass, and the browser check has no console errors.
+
+---
+
 ## Later Ideas (not in scope)
 
 Monthly budgets & alerts · payment method field · lent-money repaid/pending tracking · CSV export.

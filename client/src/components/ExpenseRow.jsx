@@ -2,16 +2,24 @@ import { Repeat } from 'lucide-react';
 import { formatMoney } from '../lib/format.js';
 import CategoryIcon from './CategoryIcon.jsx';
 
-export default function ExpenseRow({ expense, onClick }) {
+/**
+ * One expense line. Without onClick it is read-only (e.g. another family member's
+ * expense). `memberName` is shown first in the subtitle on the family dashboard.
+ */
+export default function ExpenseRow({ expense, onClick, memberName }) {
   const { category, subcategory, description, amount, recurring_id } = expense;
   const title = subcategory ? subcategory.name : category.name;
-  const subtitle = [subcategory && category.name, description].filter(Boolean).join(' · ');
+  const subtitle = [memberName, subcategory && category.name, description]
+    .filter(Boolean)
+    .join(' · ');
+  const Tag = onClick ? 'button' : 'div';
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+    <Tag
+      {...(onClick && { type: 'button', onClick })}
+      className={`flex w-full items-center gap-3 px-4 py-3 text-left ${
+        onClick ? 'transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60' : ''
+      }`}
     >
       <CategoryIcon icon={category.icon} color={category.color} />
       <div className="min-w-0 flex-1">
@@ -26,6 +34,6 @@ export default function ExpenseRow({ expense, onClick }) {
         {subtitle && <p className="truncate text-sm text-slate-500">{subtitle}</p>}
       </div>
       <p className="shrink-0 font-semibold tabular-nums">{formatMoney(amount)}</p>
-    </button>
+    </Tag>
   );
 }

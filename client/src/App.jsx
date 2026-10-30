@@ -16,6 +16,7 @@ const ExpensesPage = lazy(() => import('./pages/ExpensesPage.jsx'));
 const RecurringPage = lazy(() => import('./pages/RecurringPage.jsx'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
 const CategoriesPage = lazy(() => import('./pages/CategoriesPage.jsx'));
+const FamilyPage = lazy(() => import('./pages/FamilyPage.jsx'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.jsx'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.jsx'));
 
@@ -51,6 +52,7 @@ export default function App() {
                     <Route index element={<DashboardPage />} />
                     <Route path="expenses" element={<ExpensesPage />} />
                     <Route path="recurring" element={<RecurringPage />} />
+                    <Route path="family" element={<FamilyPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="categories" element={<CategoriesPage />} />
                   </Route>

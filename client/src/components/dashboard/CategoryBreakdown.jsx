@@ -1,57 +1,31 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ChartBar, ChevronRight } from 'lucide-react';
-import { useCategoryBreakdown, useSubcategoryBreakdown } from '../../hooks/useStats.js';
-import { formatMoney } from '../../lib/format.js';
+import { ArrowLeft, ChartBar } from 'lucide-react';
+import { PERSONAL, useCategoryBreakdown, useSubcategoryBreakdown } from '../../hooks/useStats.js';
 import CategoryIcon from '../CategoryIcon.jsx';
 import ErrorNote from '../ui/ErrorNote.jsx';
 import Spinner from '../ui/Spinner.jsx';
+import BarRow from './BarRow.jsx';
 import { cardClass } from './StatTile.jsx';
 
-/** One ranked row: label, amount, share, and a single-hue bar scaled to the largest row. */
-function BarRow({ label, icon, total, share, max, onClick }) {
-  const width = max ? Math.max((total / max) * 100, 1.5) : 0;
-  const Tag = onClick ? 'button' : 'div';
-  return (
-    <Tag
-      {...(onClick && { type: 'button', onClick })}
-      className={`group flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left ${onClick ? 'hover:bg-slate-50 dark:hover:bg-slate-800/60' : ''}`}
-    >
-      {icon}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2 text-sm">
-          <span className="truncate font-medium">{label}</span>
-          <span className="shrink-0 font-semibold tabular-nums">{formatMoney(total)}</span>
-        </div>
-        <div className="mt-1.5 flex items-center gap-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            <div className="h-full rounded-full bg-[#6366f1]" style={{ width: `${width}%` }} />
-          </div>
-          <span className="w-10 shrink-0 text-right text-xs text-slate-500 tabular-nums">
-            {Math.round(share)}%
-          </span>
-        </div>
-      </div>
-      {onClick && (
-        <ChevronRight
-          className="size-4 shrink-0 text-slate-400 group-hover:text-slate-600"
-          aria-hidden
-        />
-      )}
-    </Tag>
-  );
-}
-
-/** "Where your money goes": categories ranked by spend; tap one to see its subcategories. */
-export default function CategoryBreakdown({ range, period }) {
+/**
+ * "Where your money goes": categories ranked by spend; tap one to see its subcategories.
+ * `scope` switches between personal and family stats (see useStats.js).
+ */
+export default function CategoryBreakdown({
+  range,
+  period,
+  scope = PERSONAL,
+  title = 'Where your money goes',
+}) {
   const [selected, setSelected] = useState(null);
-  const { data: categories, isLoading, isError, refetch } = useCategoryBreakdown(range);
+  const { data: categories, isLoading, isError, refetch } = useCategoryBreakdown(range, scope);
   const {
     data: subs,
     isLoading: subsLoading,
     isError: subsError,
     refetch: refetchSubs,
-  } = useSubcategoryBreakdown(range, selected?.category_id);
+  } = useSubcategoryBreakdown(range, selected?.category_id, scope);
 
   // If the period changes and the drilled-in category has no spend any more, go back up.
   const current = selected && categories?.find((c) => c.category_id === selected.category_id);
@@ -71,10 +45,10 @@ export default function CategoryBreakdown({ range, period }) {
           </button>
         ) : (
           <h2 id="breakdown-title" className="font-medium">
-            Where your money goes
+            {title}
           </h2>
         )}
-        {drill && (
+        {drill && scope === PERSONAL && (
           <Link
             to={`/expenses?category=${drill.category_id}&period=${period}`}
             className="text-sm font-medium text-indigo-600 dark:text-indigo-400"

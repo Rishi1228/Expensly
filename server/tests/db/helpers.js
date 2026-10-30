@@ -47,7 +47,7 @@ export function setup(prefix) {
       password,
     });
     if (signInError) throw signInError;
-    return { id: data.user.id, token: s.session.access_token };
+    return { id: data.user.id, email, token: s.session.access_token };
   }
 
   /** call(user, 'GET', '/expenses') → { status, body } */

@@ -13,14 +13,18 @@ describe('app (no database needed)', () => {
     expect(r.body.status).toBe('ok');
   });
 
-  it.each(['/api/expenses', '/api/recurring', '/api/stats/summary', '/api/categories'])(
-    '%s needs a token',
-    async (path) => {
-      const r = await request(app).get(path);
-      expect(r.status).toBe(401);
-      expect(r.body.error).toBe('Missing access token');
-    },
-  );
+  it.each([
+    '/api/expenses',
+    '/api/recurring',
+    '/api/stats/summary',
+    '/api/categories',
+    '/api/family',
+    '/api/family/stats/summary',
+  ])('%s needs a token', async (path) => {
+    const r = await request(app).get(path);
+    expect(r.status).toBe(401);
+    expect(r.body.error).toBe('Missing access token');
+  });
 
   it('rejects a non-Bearer authorization header', async () => {
     const r = await request(app).get('/api/expenses').set('Authorization', 'Basic abc');
@@ -57,5 +61,15 @@ describe('fromSupabaseError', () => {
     ['XX000', 500],
   ])('%s -> %i', (code, status) => {
     expect(fromSupabaseError({ code, message: 'm' }).status).toBe(status);
+  });
+
+  it.each([
+    ['PF400', 400],
+    ['PF403', 403],
+    ['PF404', 404],
+    ['PF409', 409],
+  ])('family rule %s -> %i with its own message', (code, status) => {
+    const err = fromSupabaseError({ code, message: 'Only the head can do this' });
+    expect([err.status, err.message]).toEqual([status, 'Only the head can do this']);
   });
 });

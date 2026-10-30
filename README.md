@@ -10,6 +10,7 @@ A multi-user expense tracker: log every daily expense by category, set up recurr
 - **Expenses:** amount, category (14 built-in), optional subcategory, description, date. Search, filter by period and category, grouped by day.
 - **Dashboard:** spent, change vs the previous period, average per day, top category, a daily/monthly trend chart, and a category breakdown you can drill into.
 - **Recurring bills:** weekly / monthly / yearly bills (rent, Netflix, house-help wage) are logged automatically on each due date. Pause, resume, edit, delete.
+- **Family groups:** create a family and invite members by email (they accept in the app). Everyone logs their own expenses; the Family page shows the family total, who spent what, and each person's numbers. The head removes members and chooses whether everyone can see each other's spending or only the head can.
 - **Custom categories:** add your own categories (icon and color) and subcategories.
 - **Accounts:** email sign-up, forgot / reset / change password, optional Google sign-in. Each user sees only their own data (enforced in the database).
 - **Light and dark mode**, mobile-first layout (bottom nav on phones, sidebar on desktop).

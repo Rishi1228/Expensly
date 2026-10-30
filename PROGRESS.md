@@ -6,18 +6,26 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 ## Status Overview
 
-| Phase | Name                   | Status | Started    | Completed  |
-| ----- | ---------------------- | ------ | ---------- | ---------- |
-| 0     | Project Setup          | ✅     | 2026-10-28 | 2026-10-28 |
-| 1     | Database & Auth        | ✅     | 2026-10-28 | 2026-10-28 |
-| 2     | Expense & Category API | ✅     | 2026-10-28 | 2026-10-28 |
-| 3     | Frontend Core          | ✅     | 2026-10-28 | 2026-10-28 |
-| 4     | Analytics Dashboard    | ✅     | 2026-10-28 | 2026-10-28 |
-| 5     | Recurring Bills        | ✅     | 2026-10-28 | 2026-10-28 |
-| 6     | Polish & Responsive QA | ⬜     | —          | —          |
-| 7     | Testing & Deployment   | ⬜     | —          | —          |
+| Phase | Name                     | Status | Started    | Completed  |
+| ----- | ------------------------ | ------ | ---------- | ---------- |
+| 0     | Project Setup            | ✅     | 2026-10-28 | 2026-10-28 |
+| 1     | Database & Auth          | ✅     | 2026-10-28 | 2026-10-28 |
+| 2     | Expense & Category API   | ✅     | 2026-10-28 | 2026-10-28 |
+| 3     | Frontend Core            | ✅     | 2026-10-28 | 2026-10-28 |
+| 4     | Analytics Dashboard      | ✅     | 2026-10-28 | 2026-10-28 |
+| 5     | Recurring Bills          | ✅     | 2026-10-28 | 2026-10-28 |
+| 6     | Polish & Responsive QA   | ✅     | 2026-10-28 | 2026-10-28 |
+| 7     | Testing & Deployment     | 🟡     | 2026-10-28 | —          |
+| 8     | Family: DB & Permissions | ✅     | 2026-10-30 | 2026-10-30 |
+| 9     | Family: API              | ⬜     | —          | —          |
+| 10    | Family: Management UI    | ⬜     | —          | —          |
+| 11    | Family Dashboard         | ⬜     | —          | —          |
+| 12    | Family: Tests & QA       | ⬜     | —          | —          |
 
 ## Changelog
+
+- **2026-10-30**: Family groups (phases 8–12) built: migration, API, Family page (overview + members), tests. Migration applied to Supabase; `npm run test:db` 57/57. Browser check still to do.
+- **2026-10-30**: Family groups added to IDEA.md. Planned as phases 8–12 in PLAN.md (rules, tables, routes).
 
 - **2026-10-28**: Phase 7: tests (server 39 unit + 42 DB, client 23 component/unit), GitHub Actions CI, final README with Vercel steps. Only the Vercel deploy itself is left (done from the Vercel dashboard).
 
@@ -146,3 +154,46 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
 **Notes / Decisions:** The service-role key isn't used by the API at all, so it is left out of Vercel (only DB tests use it). DB tests create temporary users and delete them after.
 **Blockers:** Deploy waits on the user importing the repo in Vercel.
+
+## Phase 8 — Family: Database & Permissions
+
+- [x] Migration `20261030000001_family.sql`: `families`, `family_members` (unique `user_id` = one family per user; one head per family), `family_invites`
+- [x] RLS: members can only read their family's rows; invitees read invites sent to their email. No write grants — every change goes through a function
+- [x] Action functions: `create_family`, `update_family`, `delete_family`, `invite_family_member`, `cancel_family_invite`, `respond_family_invite`, `remove_family_member`, `leave_family`, `transfer_family_head`, plus `get_my_family()` (one call for the whole page)
+- [x] Analytics functions: `family_spend_total / _by_member / _by_category / _by_subcategory / _trend`, `family_expenses`. `family_scope()` checks who the caller may see
+- [x] Applied to Supabase (2026-10-30)
+
+**Notes / Decisions:**
+
+- Invites need accepting, because joining lets the head see your expenses. Invites are by email, so they also work for people who sign up later. No email is sent: the invitee sees it on their Family page.
+- Family numbers include members' expenses from before they joined (family total = sum of personal totals).
+- If the head's account is deleted, the longest-standing member becomes head. When the last member leaves, the family is deleted.
+- Errors use custom codes `PF400/403/404/409`, which the API maps to those HTTP statuses with the function's message.
+- **Tested locally** (PGlite in-memory Postgres with a stubbed `auth` schema, all real migrations): 34/34 — invite/accept, any member can invite, head-only remove/settings/transfer, head can't leave with members, direct table writes blocked, restricted vs open visibility, "Other members" row, totals, trend, outsider never included, personal RLS unchanged, head promotion on account deletion, empty family deleted.
+  **Blockers:** —
+
+## Phase 9 — Family: API
+
+- [x] `/api/family` routes (see PLAN.md), Zod schemas in `server/src/schemas/family.js`
+- [x] Family stats return the same shapes as `/api/stats`, plus `member` filter and `/by-member`
+- [x] `fromSupabaseError` maps `PF4xx` codes to their status and message
+
+## Phase 10 — Family: Management UI
+
+- [x] "Family" in the sidebar and phone bottom nav. Phone nav is now Home · Expenses · + · Family · Profile; Recurring moved to a row on Profile (phones only; the desktop sidebar still has it)
+- [x] No family: received invites (accept/decline) + "Start a family"
+- [x] Members tab: member list with Head/You badges, invite by email, pending invites (cancel by head or sender), "Who sees what" switch (head) or explanation (members), rename, delete family (head) / leave (member). Remove and make-head use two-tap confirm
+- [ ] Browser check with two real users (needs the migration applied)
+
+## Phase 11 — Family Dashboard
+
+- [x] Overview tab: period chips, "Everyone / You / each visible member" chips, tiles (Family spent, change, avg/day, top category), "Who spent what" bars (tap to focus a member), trend chart, category breakdown with drill-down, recent expenses with member names (your own open the edit dialog)
+- [x] Restricted members see a note explaining what's hidden; others appear as one "Other members" row
+- [x] Shared pieces pulled out of the personal dashboard: `SummaryTiles`, `PeriodChips`, `BarRow`; `useStats` hooks and `CategoryBreakdown` take a scope (personal or family)
+
+## Phase 12 — Family: Tests & QA
+
+- [x] `server/tests/db/family.test.js` (runs with `npm run test:db` once the migration is applied)
+- [x] Unit: family schemas, `PF` error mapping, `/api/family` needs a token (server 51 tests). Component: `FamilyPage.test.jsx` (no-family create + accept invite, member vs head controls, two-tap remove, view switch, invite validation) (client 28 tests)
+- [x] `npm run test:db` against Supabase: 57/57 (15 new family tests)
+- [ ] Browser check at phone and desktop widths, light and dark

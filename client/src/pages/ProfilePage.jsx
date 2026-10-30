@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronRight, KeyRound, LogOut, Tags } from 'lucide-react';
+import { ChevronRight, KeyRound, LogOut, Repeat, Tags, Users } from 'lucide-react';
 import { api } from '../api/client.js';
 import { useAuth } from '../context/auth-context.js';
 import PasswordForm from '../components/PasswordForm.jsx';
@@ -84,6 +84,16 @@ export default function ProfilePage() {
           Settings
         </h2>
         <div className={cardClass}>
+          <Link to="/recurring" className={`${rowClass} md:hidden`}>
+            <Repeat className="size-5 text-slate-500" aria-hidden />
+            <span className="flex-1">Recurring bills</span>
+            <ChevronRight className="size-4 text-slate-400" aria-hidden />
+          </Link>
+          <Link to="/family?tab=members" className={rowClass}>
+            <Users className="size-5 text-slate-500" aria-hidden />
+            <span className="flex-1">Family members</span>
+            <ChevronRight className="size-4 text-slate-400" aria-hidden />
+          </Link>
           <Link to="/categories" className={rowClass}>
             <Tags className="size-5 text-slate-500" aria-hidden />
             <span className="flex-1">Manage categories</span>

@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { createExpense, listExpensesQuery, updateExpense } from '../../src/schemas/expenses.js';
 import { createRecurring, updateRecurring } from '../../src/schemas/recurring.js';
 import { createCategory } from '../../src/schemas/categories.js';
+import {
+  createFamily,
+  familyExpensesQuery,
+  familyRangeQuery,
+  inviteBody,
+  updateFamily,
+} from '../../src/schemas/family.js';
 
 const CAT = '0b6c5c0e-3c51-4c4a-9d1f-1f2b3c4d5e6f';
 
@@ -65,5 +72,35 @@ describe('category schema', () => {
     expect(createCategory.safeParse({ name: 'Pets', color: '#f97316' }).success).toBe(true);
     expect(createCategory.safeParse({ name: '  ' }).success).toBe(false);
     expect(createCategory.safeParse({ name: 'Pets', color: 'orange' }).success).toBe(false);
+  });
+});
+
+describe('family schemas', () => {
+  it('normalises an invite email', () => {
+    expect(inviteBody.parse({ email: '  Mom@Example.COM ' }).email).toBe('mom@example.com');
+  });
+
+  it.each([{}, { email: 'not-an-email' }])('rejects invite %o', (body) => {
+    expect(inviteBody.safeParse(body).success).toBe(false);
+  });
+
+  it('needs a family name and something to update', () => {
+    expect(createFamily.safeParse({ name: '  ' }).success).toBe(false);
+    expect(updateFamily.safeParse({}).success).toBe(false);
+    expect(updateFamily.parse({ members_can_view_all: true })).toEqual({
+      members_can_view_all: true,
+    });
+  });
+
+  it('family stats take an optional member and still check the range', () => {
+    expect(familyRangeQuery.parse({ member: CAT }).member).toBe(CAT);
+    expect(familyRangeQuery.safeParse({ member: 'x' }).success).toBe(false);
+    expect(familyRangeQuery.safeParse({ from: '2026-10-02', to: '2026-10-01' }).success).toBe(
+      false,
+    );
+  });
+
+  it('family expenses page defaults', () => {
+    expect(familyExpensesQuery.parse({})).toMatchObject({ page: 1, limit: 20 });
   });
 });

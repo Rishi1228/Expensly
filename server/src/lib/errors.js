@@ -9,6 +9,9 @@ export class HttpError extends Error {
 /** Maps a Supabase/PostgREST error to an HttpError with a sensible status. */
 export function fromSupabaseError(error) {
   if (!error) return null;
+  // Custom codes raised by the family SQL functions (PF400, PF403, ...) carry a user-facing message.
+  const custom = /^PF(\d{3})$/.exec(error.code ?? '');
+  if (custom) return new HttpError(Number(custom[1]), error.message);
   switch (error.code) {
     case 'PGRST116': // .single() found no rows
       return new HttpError(404, 'Not found');

@@ -9,6 +9,7 @@ import expensesRouter from './routes/expenses.js';
 import { categoriesRouter, subcategoriesRouter } from './routes/categories.js';
 import statsRouter from './routes/stats.js';
 import recurringRouter from './routes/recurring.js';
+import familyRouter from './routes/family.js';
 
 export function createApp() {
   const app = express();
@@ -32,6 +33,7 @@ export function createApp() {
   api.use('/subcategories', subcategoriesRouter);
   api.use('/stats', statsRouter);
   api.use('/recurring', recurringRouter);
+  api.use('/family', familyRouter);
   app.use('/api', api);
 
   app.use(notFound);
